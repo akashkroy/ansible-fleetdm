@@ -24,3 +24,9 @@ Add ip addresses in hosts file
 # How to run this script
 ```
 ansible-playbook -i hosts deploy-fleet.yml
+```
+# Post Installation 
+Go to **https://example.com/setup 
+![image](https://user-images.githubusercontent.com/25970310/109800931-cf72ea80-7c43-11eb-89db-c860cbc03542.png)
+ 
+ Setup User and you are good to go !

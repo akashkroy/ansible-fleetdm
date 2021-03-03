@@ -5,6 +5,7 @@ mysql:
   username: fleet_user
   password: fl33tPassw0rd
 redis:
+  password: hello_there
   address: 127.0.0.1:6379
 server:
   address: 127.0.0.1:8080

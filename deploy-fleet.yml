@@ -1,6 +1,5 @@
-- hosts: all
+- hosts: fleetdm
   become: yes
-  become_user: root 
   tasks:
    - include_vars: vars/main.yml  # Stores the variables 
    - import_tasks: roles/init.yaml # Initial server updates

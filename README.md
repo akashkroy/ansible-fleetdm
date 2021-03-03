@@ -1,6 +1,6 @@
 # ansible-fleetdm
-Ansible playbook for Fleetdm
-
+Ansible playbook for Fleetdm on Ubuntu 20.04
+Haven't tested on other distros. 
 # Install Dependencies 
 Install dependencies for mysql installation first 
 ```

@@ -1,0 +1,41 @@
+# Install and configure redis server on Ubuntu 20.04
+- name: Update the apt cache
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Install the redis server
+  become: yes
+  apt:
+    name: redis-server
+    state: latest
+
+- name: configure systemd
+  become: yes
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^supervised no$'
+    line: 'supervised systemd'
+    state: present
+
+- name: secure redis
+  become: yes
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^# requirepass \w*$'
+    line: 'requirepass {{ redis_password }}'
+    state: present
+
+- name: bind to redis.bind_addr
+  become: yes
+  lineinfile:
+    path: /etc/redis/redis.conf
+    regexp: '^bind {{ ipv4_addr }}$'
+    line: 'bind {{ redis_bind_addr }}'
+    state: present
+
+- name: Restart the redis service
+  become: yes
+  service:
+    name: redis
+    state: restarted

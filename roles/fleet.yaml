@@ -1,0 +1,140 @@
+
+- name: update apt-cache
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Install unzip
+  become: yes
+  apt:
+    name: unzip
+    state: latest
+
+- name: Create Fleet group
+  become: yes
+  group:
+    name: 'fleetdm'
+    state: present
+
+- name: Create Fleetdm user
+  become: yes
+  user:
+    name: fleetdm
+    shell: /usr/sbin/nologin
+
+- name: Stat fleetdm install
+  become: yes
+  stat:
+    path: /usr/local/bin/fleet
+  register: fleetdm_install
+
+- name: Download Fleetdm
+  get_url:
+    url: '{{ fleetdm_down_url }}'
+    dest: /tmp/fleet.zip
+  when: not fleetdm_install.stat.exists
+
+- name: Create temporary unzip directory
+  file:
+    path: /tmp/fleetdm
+    state: directory
+  when: not fleetdm_install.stat.exists
+
+- name: Unarchive Fleetdm
+  unarchive:
+    src: /tmp/fleet.zip
+    dest: /tmp/fleetdm
+    remote_src: true
+  when: not fleetdm_install.stat.exists
+
+- name: Copy Fleetdm Fleet binary
+  become: yes
+  copy:
+    src: /tmp/fleetdm/linux/fleet
+    dest: /usr/local/bin/fleet
+    remote_src: true
+    owner: root
+    group: root
+    mode: 0755
+  when: not fleetdm_install.stat.exists
+
+# Setup Fleetdm
+
+- name: Create Fleetdm conf directory
+  become: yes
+  file:
+    path: /etc/fleetdm
+    state: directory
+    owner: root
+    group: root
+
+- name: Create Fleetdm logging directory
+  become: yes
+  file:
+    path: /var/log/fleetdm
+    state: directory
+    recurse: yes
+    owner: fleetdm
+    group: fleetdm
+
+- name: Copy Fleetdm Conf
+  become: yes
+  copy:
+    src: conf/conf-fleetdm.yml
+    dest: /etc/fleetdm/fleetdm.yml
+    owner: root
+    group: fleetdm
+    mode: 0640
+
+- name: Copy Fleetdm public cert
+  become: yes
+  copy:
+    src: conf/tls/fleetdm.crt
+    dest: '/etc/ssl/certs/fleetdm.crt'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Copy Fleetdm private key
+  become: yes
+  copy:
+    src: conf/tls/fleetdm.key
+    dest: '/etc/ssl/private/fleetdm.key'
+    owner: root
+    group: root
+    mode: 0400
+
+# Initialize fleetdm
+
+- name: Initialize Fleetdm database
+  become: yes
+  shell: yes "" | /usr/local/bin/fleet prepare db --config /etc/fleetdm/fleetdm.yml
+
+# Setup Fleetdm as a systemd service
+- name: Copy Fleetdm SystemD
+  become: yes
+  copy:
+    src: conf/fleetdm-systemd.service
+    dest: /etc/systemd/system/fleetdm.service
+    owner: root
+    group: root
+    mode: 0640
+
+- name: Start Fleetdm Service
+  become: yes
+  service:
+    name: fleetdm
+    state: restarted
+    enabled: yes
+
+- name: Fleetdm healthcheck
+  uri:
+    url: "https://127.0.0.1:8080/setup"
+    follow_redirects: none
+    method: GET
+    validate_certs: 'no'
+    remote_src: yes
+  register: _result
+  until: _result.status == 200
+  retries: 720 # 720 * 5seconds = 1 hour (60*60/5)
+  delay: 5

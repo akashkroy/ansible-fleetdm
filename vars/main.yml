@@ -1,0 +1,18 @@
+mysql_root_password: "ar951753!"
+mysql_databases:
+        - name: fleet
+          encoding: utf8
+          collation: utf8_general_ci
+mysql_users:
+        - name: fleet_user
+          host: "%"
+          password: fl33tPassw0rd
+          priv: "fleet.*:ALL"
+
+fleetdm_down_url: "https://github.com/fleetdm/fleet/releases/latest/download/fleet.zip"
+
+ipv4_addr: '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
+redis_bind_addr: 127.0.0.1
+redis_port: 6379
+redis_password: hello_there
+hostname: akashkroy.com

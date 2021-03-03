@@ -1,0 +1,52 @@
+####################################################################
+# Install/Setup Nginx
+####################################################################
+
+- name: Install/Setup Nginx
+  apt:
+    name: ['nginx']
+    state: latest
+
+- name: Copy nginx.conf
+  template:
+    src: conf/nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: 0400
+
+- name: Copy nginx_fleetdm.conf
+  template:
+    src: 'conf/nginx_fleetdm.conf'
+    dest: '/etc/nginx/conf.d/fleetdm.conf'
+    owner: root
+    group: root
+    mode: 0400
+
+
+- name: Set NGINX to IPv4 ONLY
+  ansible.builtin.lineinfile:
+    path: /etc/nginx/conf.d/fleetdm.conf
+    state: absent
+    regexp: '{{ item }}'
+  with_items:
+    - 'listen \[\:\:\]\:80 default_server;'
+    - 'listen \[\:\:\]\:443 ssl http2;'
+
+
+- name: Start Nginx service
+  service:
+    name: nginx
+    state: restarted
+    enabled: yes
+
+- name: NGINX loopback healthcheck
+  uri:
+    url: "https://127.0.0.1:443/setup"
+    follow_redirects: none
+    method: GET
+    validate_certs: 'no'
+  register: _result
+  until: _result.status == 200
+  retries: 720 # 720 * 5 seconds = 1hour (60*60/5)
+  delay: 5 # Every 5 seconds

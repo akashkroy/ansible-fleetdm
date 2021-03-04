@@ -79,7 +79,7 @@
 
 - name: Copy Fleetdm Conf
   become: yes
-  copy:
+  template:
     src: conf/conf-fleetdm.yml
     dest: /etc/fleetdm/fleetdm.yml
     owner: root

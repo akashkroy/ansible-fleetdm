@@ -1,9 +1,9 @@
 - hosts: fleetdm
   become: yes
   tasks:
-   - include_vars: vars/main.yml  # Stores the variables 
+   - include_vars: vars/main.yml  # Stores the variables
    - import_tasks: roles/init.yaml # Initial server updates
    - import_tasks: roles/deploy-mysql.yml  # installs and sets up the database
-   - import_tasks: roles/redis.yaml # installs redis 
-   - import_tasks: fleet.yaml  # installs fleet
-   - import_tasks: setup_nginx.yaml  # installs nginx
+   - import_tasks: roles/redis.yaml # installs redis
+   - import_tasks: roles/fleet.yaml  # installs fleet
+   - import_tasks: roles/setup_nginx.yml  # installs nginx

@@ -1,4 +1,8 @@
 mysql_root_password: "ar951753!"
+fleet_db_name: fleet
+fleet_db_user: fleet_user
+fleet_db_password: fl33tPassw0rd
+
 mysql_databases:
         - name: fleet
           encoding: utf8

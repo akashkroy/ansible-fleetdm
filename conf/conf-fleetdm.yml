@@ -1,18 +1,18 @@
 
 mysql:
   address: 127.0.0.1:3306
-  database: fleet
-  username: fleet_user
-  password: fl33tPassw0rd
+  database: {{ fleet_db_name }}
+  username: {{ fleet_db_user }}
+  password: {{ fleet_db_password }}
 redis:
-  password: hello_there
-  address: 127.0.0.1:6379
+  password: {{ redis_password }}
+  address: {{ redis_bind_addr }}:{{ redis_port }}
 server:
   address: 127.0.0.1:8080
   cert: /etc/ssl/certs/fleetdm.crt
   key: /etc/ssl/private/fleetdm.key
 auth:
-  jwt_key: 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJBa2FzaCIsIlVzZXJuYW1lIjoiYWthc2giLCJleHAiOjE2MTQ2ODg3NDAsImlhdCI6MTYxNDY4ODc0MH0.-zJzpkMd0nmjFvo2XUv1Yz-fHCSJeP0ZXkhe4VSqpzM'
+  jwt_key: {{ fleet_jwt_key }}
 filesystem:
   status_log_file: /var/log/fleetdm/status.log
   result_log_file: /var/log/fleetdm/result.log

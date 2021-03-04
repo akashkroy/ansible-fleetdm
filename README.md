@@ -16,7 +16,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout conf/tls/fleetdm.key
 ```
 
 # Adding variables 
-Add your own keys and variables in **vars/main.yml**  and **conf/conf-fleetdm.yml**
+Add your own keys and variables in **vars/main.yml**
 
 # Add hosts 
 Add ip addresses in hosts file 
